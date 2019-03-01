@@ -1,5 +1,5 @@
 run: hw interpose
-	LD_PRELOAD=./interpose.so ./hw
+	LD_PRELOAD=./interpose.so ./FIRESTARTER
 
 clean:
 	rm -f hw interpose.so
