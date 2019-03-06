@@ -1,0 +1,75 @@
+0x610: MSR_PKG_POWER_LIMIT = 0x384b00011483e8
+0x606: MSR_RAPL_POWER_UNIT = 00000000000a0e03
+
+1/2^TIME_UNIT
+time unit = 10 because that bit in the RAPL_POWER_UNIT is a which is 10.
+1/1024 seconds
+
+
+Power Limit #1 is bits 0-14 of PKG_POWER_LIMIT
+83e8 is bits 0-15
+the 8 = 1000 in binary
+1  0   0  0
+15 14 13 12
+
+
+just use 00 not the 10.
+
+so the hex value becomes 03e8
+which is 1000 eigths of a watt.
+power limit = 125 watts (1000/8)
+
+
+TIME Limit field:
+0x384b00011483e8
+
+bitmask to find the 17-23:
+0x7F
+
+in c: (data is the register value)
+mask = 0x7F << 17;
+value = data&mask;
+value = value >> 17;
+***
+			- 50 runs of FIRESTARTER @ 50 different power bounds (mostly useful & limit firestarter runs to 10 seconds each with all cores)
+			- Measure end to end iterations (reported by FIRESTARTER option)
+			Average Power (end to end)
+			Total Instructions Retired
+			Total Actual cycles (APERF)
+
+			4 graphs 
+			Power limit on x axis
+			observed on the Y axis
+
+			Finally, (All sampled at 10 ms)
+			Instructions Retired
+			Cycles w/ 2, 3, 4 instructions retired
+			Instructions per cycle
+			(Record reference cycles)
+			Graph:
+			x axis Actual Time
+			y Axis observed
+
+
+			7 Graphs Total..
+
+***
+
+ASSIGNEMNT:
+20 different power bounds
+End to end instructions retired
+zero out accumulator when it begins
+firestarter in between for ten seconds
+read when it ends
+
+
+
+
+========================================================================
+
+Figure 18-1. Layout of IA32_PERFEVTSELx MSRs Page 190 of vol 3b
+X is different core numbers
+
+Use the instruction retired event select and UMASK
+
+vol 4 2-7
