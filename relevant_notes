@@ -37,7 +37,7 @@ value = value >> 17;
 			Total Instructions Retired
 			Total Actual cycles (APERF)
 
-			4 graphs 
+			4 graphs
 			Power limit on x axis
 			observed on the Y axis
 
@@ -61,6 +61,24 @@ End to end instructions retired
 zero out accumulator when it begins
 firestarter in between for ten seconds
 read when it ends
+
+
+
+JACK:
+	The relevant hex addresses for PERFEVTSELx is 0x186-0x189
+	pages 137,138 of vol4 docs
+
+	Layout of this register is on page 190 of vol 3b
+
+	The valid event select and UMasks are on page 191 of vol 3b
+
+	Instructions retired Umask 0x00 Event Select 0xC0
+
+	PERFEVTSELx structure:
+	0-7: Event Select, 0xC0
+	8-15: UMASK, 0x00
+	16, 17: User, operating system respectively. Both 1.
+	22: Enable counters, 1
 
 
 
