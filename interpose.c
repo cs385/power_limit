@@ -41,10 +41,10 @@
 #define PERFEVTSEL2					((off_t)0x188)
 #define PERFEVTSEL3					((off_t)0x189)
 
-#define COUNTER0					((off_t))
-#define COUNTER1					((off_t))
-#define COUNTER2					((off_t))
-#define COUNTER3					((off_t))
+#define COUNTER0					((off_t)0xC1)
+#define COUNTER1					((off_t)0xC2)
+#define COUNTER2					((off_t)0xC3)
+#define COUNTER3					((off_t)0xC4)
 
 //TODO: Remove unnecessary values
 
@@ -75,28 +75,41 @@ static int msr1_fd = -1;
 static int msr2_fd = -1;
 static int msr3_fd = -1;
 
-static void prep_counters() {
+uint64_t enable_mask = 0x4300c0;
+uint64_t disable_mask = 0x300c0;
+
+
+static void disable_counters() {
+	int D;
+	D = pwrite( msr0_fd, &disable_mask, sizeof(disable_mask), PERFEVTSEL0); assert( 1 <= D);
+	D = pwrite( msr1_fd, &disable_mask, sizeof(disable_mask), PERFEVTSEL1); assert( 1 <= D);
+	D = pwrite( msr2_fd, &disable_mask, sizeof(disable_mask), PERFEVTSEL2); assert( 1 <= D);
+	D = pwrite( msr3_fd, &disable_mask, sizeof(disable_mask), PERFEVTSEL3); assert( 1 <= D);
 
 }
 
 //Reset Counters
 static void reset_counters() {
+	int D;
+	D = pwrite( msr0_fd, 0x0, sizeof(0x0), COUNTER0); assert( 1 <= D);
+	D = pwrite( msr0_fd, 0x0, sizeof(0x0), COUNTER1); assert( 1 <= D);
+	D = pwrite( msr0_fd, 0x0, sizeof(0x0), COUNTER2); assert( 1 <= D);
+	D = pwrite( msr0_fd, 0x0, sizeof(0x0), COUNTER3); assert( 1 <= D);
 
 }
 
 //Enables counters in all four cores of CPU
 static void enable_counters() {
-	//mask use
-}
-
-static void disable_counters() {
-	//mask use
+	int D;
+	D = pwrite( msr0_fd, &enable_mask, sizeof(enable_mask), PERFEVTSEL0); assert( 1 <= D);
+	D = pwrite( msr1_fd, &enable_mask, sizeof(enable_mask), PERFEVTSEL1); assert( 1 <= D);
+	D = pwrite( msr2_fd, &enable_mask, sizeof(enable_mask), PERFEVTSEL2); assert( 1 <= D);
+	D = pwrite( msr3_fd, &enable_mask, sizeof(enable_mask), PERFEVTSEL3); assert( 1 <= D);
 }
 
 //Reads counters in all four cores of CPU and records that value into my_msrs
 static void read_counters(int before) {
 	int rc;
-	int mask;
 
 	assert(msr0_fd > 0);
 	assert(msr1_fd > 0);
@@ -222,9 +235,6 @@ int main_hook(int argc, char **argv, char **envp)
 	fprintf(stdout, "QQQ %s:%d Setting up the msr file descriptors.\n",
 		__FILE__, __LINE__ );
 	set_up_msr_file_descriptors();
-
-	// Set up Counters
-	prep_counters();
 
 	// Disables counters;
 	fprintf(stdout, "QQQ %s:%d Disabling the counters.\n", __FILE__, __LINE__);
