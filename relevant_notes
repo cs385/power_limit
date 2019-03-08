@@ -78,7 +78,8 @@ JACK:
 	0-7: Event Select, 0xC0
 	8-15: UMASK, 0x00
 	16, 17: User, operating system respectively. Both 1.
-	22: Enable counters, 1
+
+	****22: Enable counters, 1
 
 
 

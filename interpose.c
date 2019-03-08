@@ -41,8 +41,10 @@
 #define PERFEVTSEL2					((off_t)0x188)
 #define PERFEVTSEL3					((off_t)0x189)
 
-
-float val;
+#define COUNTER0					((off_t))
+#define COUNTER1					((off_t))
+#define COUNTER2					((off_t))
+#define COUNTER3					((off_t))
 
 //TODO: Remove unnecessary values
 
@@ -53,10 +55,17 @@ static struct my_msrs{
 	uint64_t power_limit;
 	uint64_t power_info;
 	uint64_t power_unit;
-	uint64_t perfevtsel0;
-	uint64_t perfevtsel1;
-	uint64_t perfevtsel2;
-	uint64_t perfevtsel3;
+	
+	uint64_t before_counter0;
+	uint64_t before_counter1;
+	uint64_t before_counter2;
+	uint64_t before_counter3;
+
+	uint64_t after_counter0;
+	uint64_t after_counter1;
+	uint64_t after_counter2;
+	uint64_t after_counter3;
+
 } my_msrs;
 
 
@@ -66,55 +75,89 @@ static int msr1_fd = -1;
 static int msr2_fd = -1;
 static int msr3_fd = -1;
 
-
-//Enables counters in all four cores of CPU
-static void enable_counters() {
+static void prep_counters() {
 
 }
 
+//Reset Counters
+static void reset_counters() {
+
+}
+
+//Enables counters in all four cores of CPU
+static void enable_counters() {
+	//mask use
+}
+
+static void disable_counters() {
+	//mask use
+}
 
 //Reads counters in all four cores of CPU and records that value into my_msrs
-static void read_counters() {
+static void read_counters(int before) {
 	int rc;
 	int mask;
 
 	assert(msr0_fd > 0);
+	assert(msr1_fd > 0);
+	assert(msr2_fd > 0);
+	assert(msr3_fd > 0);
 
-	rc = pread( msr0_fd, &my_msrs.perfevtsel0, sizeof(my_msrs.perfevtsel0), PERFEVTSEL0); assert( 8 == rc); rc = 0;
-	rc = pread( msr1_fd, &my_msrs.perfevtsel1, sizeof(my_msrs.perfevtsel1), PERFEVTSEL1); assert( 8 == rc); rc = 0;
-	rc = pread( msr2_fd, &my_msrs.perfevtsel2, sizeof(my_msrs.perfevtsel2), PERFEVTSEL2); assert( 8 == rc); rc = 0;
-	rc = pread( msr3_fd, &my_msrs.perfevtsel3, sizeof(my_msrs.perfevtsel3), PERFEVTSEL3); assert( 8 == rc); rc = 0;
+	if(before == 0) {
+		rc = pread( msr0_fd, &my_msrs.before_counter0, sizeof(my_msrs.before_counter0), COUNTER0); assert( 8 == rc);
+		rc = pread( msr1_fd, &my_msrs.before_counter1, sizeof(my_msrs.before_counter1), COUNTER1); assert( 8 == rc);
+		rc = pread( msr2_fd, &my_msrs.before_counter2, sizeof(my_msrs.before_counter2), COUNTER2); assert( 8 == rc);
+		rc = pread( msr3_fd, &my_msrs.before_counter3, sizeof(my_msrs.before_counter3), COUNTER3); assert( 8 == rc);
 
-	//other stuff...masks?
+	} else {
+		rc = pread( msr0_fd, &my_msrs.after_counter0, sizeof(my_msrs.after_counter0), COUNTER0); assert( 8 == rc);
+		rc = pread( msr1_fd, &my_msrs.after_counter1, sizeof(my_msrs.after_counter1), COUNTER1); assert( 8 == rc);
+		rc = pread( msr2_fd, &my_msrs.after_counter2, sizeof(my_msrs.after_counter2), COUNTER2); assert( 8 == rc);
+		rc = pread( msr3_fd, &my_msrs.after_counter3, sizeof(my_msrs.after_counter3), COUNTER3); assert( 8 == rc);
+	}
+
+
 
 }
 
-static void read_msrs(){
-	int rc;
-	int mask = 0xFFFFFFFF;
-	assert( msr_fd > 0 );
-	// rc = pread( msr0_fd, &my_msrs.mperf, sizeof(my_msrs.mperf), IA32_MPERF );	assert( 8 == rc );
-	rc = pread( msr0_fd, &my_msrs.eng_status, sizeof(my_msrs.eng_status), ENERGY_STATUS );	assert( 8 == rc );
+//only useful to write our read_counters... not actually used...
+// static void read_msrs(){
+// 	//int rc;
+// 	//int mask = 0xFFFFFFFF;
+// 	assert( msr0_fd > 0 );
+// 	assert( msr1_fd > 0 );
+// 	assert( msr2_fd > 0 );
+// 	assert( msr3_fd > 0 );
 
-	mask = mask << 0;
-	my_msrs.eng_status = (my_msrs.eng_status & mask) >> 0;
-	// fprintf(stderr, "number: %\n" PRId64, my_msrs.eng_status);
-	//conversion:
-	val = my_msrs.eng_status;
-	val = val * 1/pow(2,14);
-}
+// 	// rc = pread( msr0_fd, &my_msrs.mperf, sizeof(my_msrs.mperf), IA32_MPERF );	assert( 8 == rc );
+// 	// rc = pread( msr0_fd, &my_msrs.eng_status, sizeof(my_msrs.eng_status), ENERGY_STATUS );	assert( 8 == rc );
 
-static void dump_msrs(){
+// 	//mask = mask << 0;
+// 	//my_msrs.eng_status = (my_msrs.eng_status & mask) >> 0;
+// 	// fprintf(stderr, "number: %\n" PRId64, my_msrs.eng_status);
+// }
+
+static void print_msrs(){
 	static int initialized = 0;
 	if( !initialized ){
 		fprintf(stdout, "RRR joule\n");
 		initialized = 1;
 	}
-	// fprintf(stdout, "RRR %" PRId64 " %" PRId64 "\n",
-	// 		my_msrs.mperf,
-	// 		my_msrs.aperf);
-	fprintf(stdout, "RRR %" PRId64 "\n", val);
-	val = 0;
+	fprintf(stdout, "RR1 %" PRId64 " %" PRId64 "\n",
+			my_msrs.before_counter0,
+			my_msrs.after_counter0);
+
+	fprintf(stdout, "RR2 %" PRId64 " %" PRId64 "\n",
+			my_msrs.before_counter1,
+			my_msrs.after_counter1);
+
+	fprintf(stdout, "RR3 %" PRId64 " %" PRId64 "\n",
+			my_msrs.before_counter2,
+			my_msrs.after_counter2);
+
+	fprintf(stdout, "RR4 %" PRId64 " %" PRId64 "\n",
+			my_msrs.before_counter3,
+			my_msrs.after_counter3);
 }
 
 static void set_up_msr_file_descriptors(){
@@ -156,39 +199,6 @@ static void set_up_msr_file_descriptors(){
 	}
 }
 
-static void mytimerhandler( int sig ) {
-	// fprintf(stderr, "Ping!\n");
-	read_msrs();
-	dump_msrs();
-}
-
-static void set_up_itimer(){
-	// Note that there are three timers and their associated signals.
-	// 	ITIMER_REAL    -> SIGALRM 	wall-clock time
-	//	ITIMER_VIRTUAL -> SIGVTALRM	process time
-	//	ITIMER_PROF    -> SIGPROF	profiling time
-	//					(includes syscalls made on behalf of the process)
-	struct itimerval itv;
-	struct sigaction sact;
-	int rc;
-	sigemptyset( &sact.sa_mask );		// macro to initialize sact.
-	sact.sa_flags = 0;			// see man page for sigaction.
-	sact.sa_handler = mytimerhandler;	// execute this function when the timer expires.
-	sigaction( SIGPROF, &sact, NULL );	// set up our signal handler.
-
-	itv.it_interval.tv_sec  =    10; 	// Timer interval in seconds
-	itv.it_interval.tv_usec = 	  0;  	//   and microseconds.
-	itv.it_value.tv_sec     =    10;      	// Time to first signal,
-	itv.it_value.tv_usec    =     0;     	//   same units.
-
-	rc = setitimer( ITIMER_PROF, &itv, NULL );
-	if(rc){
-		fprintf(stderr, "QQQ %s:%d ERROR setitimer returned (%d) (%s).\n",
-			__FILE__, __LINE__, rc, strerror(errno) );
-		exit(-1);	// No need to continue.  Bail out now.
-	}
-}
-
 // Declare a pointer to hold the original value for main().
 // Being static makes sure nothing outside this file can see it.
 static int (*main_orig)(int, char **, char **);
@@ -213,15 +223,40 @@ int main_hook(int argc, char **argv, char **envp)
 		__FILE__, __LINE__ );
 	set_up_msr_file_descriptors();
 
-	// Set up our itimer.
-	fprintf(stdout, "QQQ %s:%d Setting up itimer.\n",
-		__FILE__, __LINE__ );
-	set_up_itimer();
+	// Set up Counters
+	prep_counters();
+
+	// Disables counters;
+	fprintf(stdout, "QQQ %s:%d Disabling the counters.\n", __FILE__, __LINE__);
+	disable_counters();
+
+	// Reseting the counters;
+	fprintf(stdout, "QQQ %s:%d Resetting the counters.\n", __FILE__, __LINE__);
+	reset_counters();
+
+	// Read counters;
+	fprintf(stdout, "QQQ %s:%d Reading the counters.\n", __FILE__, __LINE__);
+	read_counters(0);
+	print_msrs();
+
+	// Enable counters;
+	fprintf(stdout, "QQQ %s:%d Enable the counters.\n", __FILE__, __LINE__);
+	enable_counters();
 
 	// Pass control to the original program.
 	fprintf(stdout, "QQQ %s:%d Calling the original main().\n",
 		__FILE__, __LINE__ );
 	int ret = main_orig(argc, argv, envp);
+
+	// Disable counters;
+	fprintf(stdout, "QQQ %s:%d Disabling the counters.\n", __FILE__, __LINE__);
+	disable_counters();
+
+	// Read counters;
+	fprintf(stdout, "QQQ %s:%d Reading the counters.\n", __FILE__, __LINE__);
+	read_counters(1 );
+	print_msrs();
+
 
 	// Dump out main's return value.
 	fprintf(stdout, "QQQ %s:%d main() returned %d\n",
@@ -247,18 +282,8 @@ int __libc_start_main(
     // Note that typeof is used instead of typedef.
     typeof(&__libc_start_main) orig = dlsym(RTLD_NEXT, "__libc_start_main");
 
-		//TODO:
-		//disable counters if not disabled already
-		//read counters
-		//enable counters
-
-
     int return_value_orig = orig(main_hook, argc, argv, init, fini, rtld_fini, stack_end);
 
-		//TODO:
-    //disable counters
-    //read MSRS again
-
-    return return_value_orig
+    return return_value_orig;
 
 }
