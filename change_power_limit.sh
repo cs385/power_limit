@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# sudo wrmsr 0x610 0x$1
+echo 0x$1
