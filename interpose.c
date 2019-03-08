@@ -81,30 +81,30 @@ uint64_t disable_mask = 0x300c0;
 
 static void disable_counters() {
 	int D;
-	D = pwrite( msr0_fd, &disable_mask, sizeof(disable_mask), PERFEVTSEL0); assert( 1 <= D);
-	D = pwrite( msr1_fd, &disable_mask, sizeof(disable_mask), PERFEVTSEL1); assert( 1 <= D);
-	D = pwrite( msr2_fd, &disable_mask, sizeof(disable_mask), PERFEVTSEL2); assert( 1 <= D);
-	D = pwrite( msr3_fd, &disable_mask, sizeof(disable_mask), PERFEVTSEL3); assert( 1 <= D);
+	D = pwrite( msr0_fd, &disable_mask, sizeof(disable_mask), PERFEVTSEL0);
+	D = pwrite( msr1_fd, &disable_mask, sizeof(disable_mask), PERFEVTSEL1);
+	D = pwrite( msr2_fd, &disable_mask, sizeof(disable_mask), PERFEVTSEL2);
+	D = pwrite( msr3_fd, &disable_mask, sizeof(disable_mask), PERFEVTSEL3);
 
 }
 
 //Reset Counters
 static void reset_counters() {
 	int D;
-	D = pwrite( msr0_fd, 0x0, sizeof(0x0), COUNTER0); assert( 1 <= D);
-	D = pwrite( msr0_fd, 0x0, sizeof(0x0), COUNTER1); assert( 1 <= D);
-	D = pwrite( msr0_fd, 0x0, sizeof(0x0), COUNTER2); assert( 1 <= D);
-	D = pwrite( msr0_fd, 0x0, sizeof(0x0), COUNTER3); assert( 1 <= D);
+	D = pwrite( msr0_fd, 0x0, sizeof(0x0), COUNTER0);
+	D = pwrite( msr0_fd, 0x0, sizeof(0x0), COUNTER1);
+	D = pwrite( msr0_fd, 0x0, sizeof(0x0), COUNTER2);
+	D = pwrite( msr0_fd, 0x0, sizeof(0x0), COUNTER3);
 
 }
 
 //Enables counters in all four cores of CPU
 static void enable_counters() {
 	int D;
-	D = pwrite( msr0_fd, &enable_mask, sizeof(enable_mask), PERFEVTSEL0); assert( 1 <= D);
-	D = pwrite( msr1_fd, &enable_mask, sizeof(enable_mask), PERFEVTSEL1); assert( 1 <= D);
-	D = pwrite( msr2_fd, &enable_mask, sizeof(enable_mask), PERFEVTSEL2); assert( 1 <= D);
-	D = pwrite( msr3_fd, &enable_mask, sizeof(enable_mask), PERFEVTSEL3); assert( 1 <= D);
+	D = pwrite( msr0_fd, &enable_mask, sizeof(enable_mask), PERFEVTSEL0);
+	D = pwrite( msr1_fd, &enable_mask, sizeof(enable_mask), PERFEVTSEL1);
+	D = pwrite( msr2_fd, &enable_mask, sizeof(enable_mask), PERFEVTSEL2);
+	D = pwrite( msr3_fd, &enable_mask, sizeof(enable_mask), PERFEVTSEL3);
 }
 
 //Reads counters in all four cores of CPU and records that value into my_msrs
@@ -132,23 +132,6 @@ static void read_counters(int before) {
 
 
 }
-
-//only useful to write our read_counters... not actually used...
-// static void read_msrs(){
-// 	//int rc;
-// 	//int mask = 0xFFFFFFFF;
-// 	assert( msr0_fd > 0 );
-// 	assert( msr1_fd > 0 );
-// 	assert( msr2_fd > 0 );
-// 	assert( msr3_fd > 0 );
-
-// 	// rc = pread( msr0_fd, &my_msrs.mperf, sizeof(my_msrs.mperf), IA32_MPERF );	assert( 8 == rc );
-// 	// rc = pread( msr0_fd, &my_msrs.eng_status, sizeof(my_msrs.eng_status), ENERGY_STATUS );	assert( 8 == rc );
-
-// 	//mask = mask << 0;
-// 	//my_msrs.eng_status = (my_msrs.eng_status & mask) >> 0;
-// 	// fprintf(stderr, "number: %\n" PRId64, my_msrs.eng_status);
-// }
 
 static void print_msrs(){
 	static int initialized = 0;
