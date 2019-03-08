@@ -8,9 +8,10 @@
 
 base="0x4203e800158"
 
-for i in `seq 800 -8 8`;
-do
-		val=`echo "obase=16; $i" | bc`
-		echo $i
-        # ./change_power_limit.sh 
-done
+filename="./numbas"
+while read -r line; do
+	echo "This is the power setting: $line"
+	sudo wrmsr 0x610 $line
+	sudo make #data_$line
+	sudo wrmsr 0x610 0x4203e800158320
+done < "$filename"
