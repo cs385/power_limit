@@ -77,6 +77,7 @@ static int msr3_fd = -1;
 
 uint64_t enable_mask = 0x4300c0;
 uint64_t disable_mask = 0x300c0;
+uint64_t reset_mask = 0x0;
 
 
 static void disable_counters() {
@@ -91,10 +92,10 @@ static void disable_counters() {
 //Reset Counters
 static void reset_counters() {
 	int D;
-	D = pwrite( msr0_fd, 0x0, sizeof(0x0), COUNTER0);
-	D = pwrite( msr0_fd, 0x0, sizeof(0x0), COUNTER1);
-	D = pwrite( msr0_fd, 0x0, sizeof(0x0), COUNTER2);
-	D = pwrite( msr0_fd, 0x0, sizeof(0x0), COUNTER3);
+	D = pwrite( msr0_fd, &reset_mask, sizeof(reset_mask), COUNTER0);
+	D = pwrite( msr1_fd, &reset_mask, sizeof(reset_mask), COUNTER1);
+	D = pwrite( msr2_fd, &reset_mask, sizeof(reset_mask), COUNTER2);
+	D = pwrite( msr3_fd, &reset_mask, sizeof(reset_mask), COUNTER3);
 
 }
 
