@@ -58,7 +58,7 @@ value = value >> 17;
 ASSIGNEMNT:
 20 different power bounds
 End to end instructions retired
-zero out accumulator when it begins
+zero out accumulator when it begins   (?)
 firestarter in between for ten seconds
 read when it ends
 

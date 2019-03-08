@@ -44,7 +44,8 @@
 
 float val;
 
-//TODO: Remove
+//TODO: Remove unnecessary values
+
 static struct my_msrs{
 	uint64_t mperf;
 	uint64_t aperf;
@@ -66,16 +67,25 @@ static int msr2_fd = -1;
 static int msr3_fd = -1;
 
 
+//Enables counters in all four cores of CPU
+static void enable_counters() {
+
+}
+
+
+//Reads counters in all four cores of CPU and records that value into my_msrs
 static void read_counters() {
 	int rc;
 	int mask;
 
 	assert(msr0_fd > 0);
 
-	rc = pread( msr0_fd, &my_msrs.perfevtsel0, sizeof(my_msrs.perfevtsel0), PERFEVTSEL3); assert( 8 == rc);
-	rc = pread( msr1_fd, &my_msrs.perfevtsel1, sizeof(my_msrs.perfevtsel1), PERFEVTSEL3); assert( 8 == rc);
-	rc = pread( msr2_fd, &my_msrs.perfevtsel2, sizeof(my_msrs.perfevtsel2), PERFEVTSEL3); assert( 8 == rc);
-	rc = pread( msr3_fd, &my_msrs.perfevtsel3, sizeof(my_msrs.perfevtsel3), PERFEVTSEL3); assert( 8 == rc);
+	rc = pread( msr0_fd, &my_msrs.perfevtsel0, sizeof(my_msrs.perfevtsel0), PERFEVTSEL0); assert( 8 == rc); rc = 0;
+	rc = pread( msr1_fd, &my_msrs.perfevtsel1, sizeof(my_msrs.perfevtsel1), PERFEVTSEL1); assert( 8 == rc); rc = 0;
+	rc = pread( msr2_fd, &my_msrs.perfevtsel2, sizeof(my_msrs.perfevtsel2), PERFEVTSEL2); assert( 8 == rc); rc = 0;
+	rc = pread( msr3_fd, &my_msrs.perfevtsel3, sizeof(my_msrs.perfevtsel3), PERFEVTSEL3); assert( 8 == rc); rc = 0;
+
+	//other stuff...masks?
 
 }
 
@@ -85,10 +95,6 @@ static void read_msrs(){
 	assert( msr_fd > 0 );
 	// rc = pread( msr0_fd, &my_msrs.mperf, sizeof(my_msrs.mperf), IA32_MPERF );	assert( 8 == rc );
 	rc = pread( msr0_fd, &my_msrs.eng_status, sizeof(my_msrs.eng_status), ENERGY_STATUS );	assert( 8 == rc );
-
-
-
-
 
 	mask = mask << 0;
 	my_msrs.eng_status = (my_msrs.eng_status & mask) >> 0;
@@ -241,8 +247,15 @@ int __libc_start_main(
     // Note that typeof is used instead of typedef.
     typeof(&__libc_start_main) orig = dlsym(RTLD_NEXT, "__libc_start_main");
 
+		//TODO:
+		//disable counters if not disabled already
+		//read counters
+		//enable counters
+
+
     int return_value_orig = orig(main_hook, argc, argv, init, fini, rtld_fini, stack_end);
 
+		//TODO:
     //disable counters
     //read MSRS again
 
