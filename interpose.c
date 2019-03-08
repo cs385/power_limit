@@ -82,30 +82,30 @@ uint64_t reset_mask = 0x0;
 
 static void disable_counters() {
 	int D;
-	D = pwrite( msr0_fd, &disable_mask, sizeof(disable_mask), PERFEVTSEL0);
-	D = pwrite( msr1_fd, &disable_mask, sizeof(disable_mask), PERFEVTSEL1);
-	D = pwrite( msr2_fd, &disable_mask, sizeof(disable_mask), PERFEVTSEL2);
-	D = pwrite( msr3_fd, &disable_mask, sizeof(disable_mask), PERFEVTSEL3);
+	D = pwrite( msr0_fd, &disable_mask, sizeof(disable_mask), PERFEVTSEL0); assert( 8 == D); 
+	D = pwrite( msr1_fd, &disable_mask, sizeof(disable_mask), PERFEVTSEL1); assert( 8 == D);
+	D = pwrite( msr2_fd, &disable_mask, sizeof(disable_mask), PERFEVTSEL2); assert( 8 == D);
+	D = pwrite( msr3_fd, &disable_mask, sizeof(disable_mask), PERFEVTSEL3); assert( 8 == D);
 
 }
 
 //Reset Counters
 static void reset_counters() {
 	int D;
-	D = pwrite( msr0_fd, &reset_mask, sizeof(reset_mask), COUNTER0);
-	D = pwrite( msr1_fd, &reset_mask, sizeof(reset_mask), COUNTER1);
-	D = pwrite( msr2_fd, &reset_mask, sizeof(reset_mask), COUNTER2);
-	D = pwrite( msr3_fd, &reset_mask, sizeof(reset_mask), COUNTER3);
+	D = pwrite( msr0_fd, &reset_mask, sizeof(reset_mask), COUNTER0); assert( 8 == D);
+	D = pwrite( msr1_fd, &reset_mask, sizeof(reset_mask), COUNTER1); assert( 8 == D);
+	D = pwrite( msr2_fd, &reset_mask, sizeof(reset_mask), COUNTER2); assert( 8 == D);
+	D = pwrite( msr3_fd, &reset_mask, sizeof(reset_mask), COUNTER3); assert( 8 == D);
 
 }
 
 //Enables counters in all four cores of CPU
 static void enable_counters() {
-	int D;
-	D = pwrite( msr0_fd, &enable_mask, sizeof(enable_mask), PERFEVTSEL0);
-	D = pwrite( msr1_fd, &enable_mask, sizeof(enable_mask), PERFEVTSEL1);
-	D = pwrite( msr2_fd, &enable_mask, sizeof(enable_mask), PERFEVTSEL2);
-	D = pwrite( msr3_fd, &enable_mask, sizeof(enable_mask), PERFEVTSEL3);
+	int D; 
+	D = pwrite( msr0_fd, &enable_mask, sizeof(enable_mask), PERFEVTSEL0); assert( 8 == D);
+	D = pwrite( msr1_fd, &enable_mask, sizeof(enable_mask), PERFEVTSEL1); assert( 8 == D);
+	D = pwrite( msr2_fd, &enable_mask, sizeof(enable_mask), PERFEVTSEL2); assert( 8 == D);
+	D = pwrite( msr3_fd, &enable_mask, sizeof(enable_mask), PERFEVTSEL3); assert( 8 == D);
 }
 
 //Reads counters in all four cores of CPU and records that value into my_msrs
